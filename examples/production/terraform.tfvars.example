@@ -1,0 +1,33 @@
+# Cluster Configuration
+cluster_name = "prod-k0sctl-01"
+
+# OpenStack Configuration
+auth_url              = "https://openstack.example.com:5000/v3"
+external_network_name = "public"
+region_name           = "RegionOne"
+
+# Network Configuration
+subnet_cidr = "10.100.0.0/22"
+dns_servers = ["10.0.0.10", "10.0.0.11"]
+
+# Instance Configuration
+os_image               = "ubuntu-22.04-cloud-init"
+controller_flavor      = "m1.large"     # 4 vCPU, 8GB RAM
+controller_volume_size = 100
+worker_flavor          = "m1.xlarge"    # 8 vCPU, 16GB RAM
+worker_volume_size     = 500
+volume_type           = "ssd-performance"
+
+# k0s Configuration
+k0s_version = "1.29.1+k0s.0"
+
+# SSH Configuration
+ssh_public_key_file = "~/.ssh/k0sctl-prod.pub"
+
+# Tags
+tags = {
+  Team        = "platform"
+  CostCenter  = "engineering"
+  Backup      = "daily"
+  Monitoring  = "enabled"
+}

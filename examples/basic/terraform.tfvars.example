@@ -1,0 +1,2 @@
+auth_url              = "https://openstack.example.com:5000/v3"
+external_network_name = "public"

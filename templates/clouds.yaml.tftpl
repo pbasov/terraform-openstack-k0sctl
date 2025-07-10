@@ -1,0 +1,19 @@
+clouds:
+  ${cloud_name}:
+    auth:
+      auth_url: ${auth_url}
+      %{~ if has_user_creds ~}
+      username: ${username}
+      password: ${password}
+      %{~ endif ~}
+      %{~ if has_app_creds ~}
+      application_credential_id: ${app_cred_id}
+      application_credential_secret: ${app_cred_secret}
+      %{~ endif ~}
+      project_id: ${project_id}
+      project_name: ${project_name}
+      user_domain_name: Default
+      project_domain_name: Default
+    region_name: ${region_name}
+    interface: public
+    identity_api_version: 3

@@ -1,0 +1,11 @@
+auth_url              = "https://openstack.example.com:5000/v3"
+external_network_name = "public"
+project_id            = "your-existing-project-id"
+
+# Node configuration
+flavor_name = "m1.medium"
+image_name  = "ubuntu-22.04"
+volume_size = 50
+
+# SSH public key
+ssh_public_key = "ssh-rsa AAAAB3NzaC1... user@example.com"
