@@ -2,17 +2,20 @@ module "k0sctl" {
   source = "../.."
   
   # Required variables
-  auth_url              = var.auth_url
   external_network_name = var.external_network_name
+  
+  # Optional: Override auth_url if not using clouds.yaml
+  # auth_url = var.auth_url
   
   # SSH key
   ssh_public_key_file = "~/.ssh/id_rsa.pub"
 }
 
-variable "auth_url" {
-  description = "OpenStack authentication URL"
-  type        = string
-}
+# Variable for auth_url is optional - typically provided via clouds.yaml
+# variable "auth_url" {
+#   description = "OpenStack authentication URL"
+#   type        = string
+# }
 
 variable "external_network_name" {
   description = "Name of the external network"

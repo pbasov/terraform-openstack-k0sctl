@@ -2,9 +2,11 @@
 cluster_name = "prod-k0sctl-01"
 
 # OpenStack Configuration
-auth_url              = "https://openstack.example.com:5000/v3"
 external_network_name = "public"
 region_name           = "RegionOne"
+
+# Optional: Override auth_url if not using clouds.yaml or environment variables
+# auth_url = "https://openstack.example.com:5000/v3"
 
 # Network Configuration
 subnet_cidr = "10.100.0.0/22"

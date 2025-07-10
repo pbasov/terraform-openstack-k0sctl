@@ -1,6 +1,9 @@
-auth_url              = "https://openstack.example.com:5000/v3"
+# Required: External network and existing project ID
 external_network_name = "public"
 project_id            = "your-existing-project-id"
+
+# Optional: Override auth_url if not using clouds.yaml or environment variables
+# auth_url = "https://openstack.example.com:5000/v3"
 
 # Node configuration
 flavor_name = "m1.medium"

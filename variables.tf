@@ -1,7 +1,8 @@
 # OpenStack Authentication
 variable "auth_url" {
-  description = "OpenStack authentication URL"
+  description = "OpenStack authentication URL (optional if using clouds.yaml or environment variables)"
   type        = string
+  default     = ""
 }
 
 variable "region_name" {

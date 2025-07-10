@@ -20,9 +20,11 @@ This Terraform module creates a complete OpenStack infrastructure for deploying 
 module "k0sctl" {
   source = "path/to/terraform-openstack-k0sctl"
   
-  # OpenStack Configuration
-  auth_url              = "https://openstack.example.com:5000/v3"
+  # Required: External network for floating IPs
   external_network_name = "public"
+  
+  # Optional: Override auth_url if not using clouds.yaml or environment variables
+  # auth_url = "https://openstack.example.com:5000/v3"
   
   # Optional: Use existing project instead of creating new one
   # create_project = false
@@ -42,9 +44,11 @@ module "k0sctl" {
   source = "path/to/terraform-openstack-k0sctl"
   
   # OpenStack Configuration
-  auth_url              = "https://openstack.example.com:5000/v3"
   external_network_name = "public"
   region_name          = "RegionOne"
+  
+  # Optional: Override auth_url if not using clouds.yaml
+  # auth_url = "https://openstack.example.com:5000/v3"
   
   # Project Configuration
   project_name        = "my-k0sctl-cluster"

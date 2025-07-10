@@ -18,7 +18,7 @@ terraform {
 }
 
 provider "openstack" {
-  auth_url    = var.auth_url
+  auth_url    = var.auth_url != "" ? var.auth_url : null
   region_name = var.region_name
 }
 

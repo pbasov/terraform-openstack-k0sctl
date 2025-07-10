@@ -1,2 +1,5 @@
-auth_url              = "https://openstack.example.com:5000/v3"
+# Required: External network for floating IPs
 external_network_name = "public"
+
+# Optional: Override auth_url if not using clouds.yaml or environment variables
+# auth_url = "https://openstack.example.com:5000/v3"
