@@ -18,12 +18,10 @@ terraform {
 }
 
 provider "openstack" {
-  auth_url    = var.auth_url != "" ? var.auth_url : null
-  region_name = var.region_name
+  auth_url = var.auth_url != "" ? var.auth_url : null
+  region   = var.region_name
 }
 
-provider "random" {}
-provider "local" {}
 
 # Load SSH public key if file path is provided
 locals {
@@ -73,6 +71,11 @@ module "infra" {
   generate_k0sctl_config = var.generate_k0sctl_config
   k0sctl_config_path    = var.k0sctl_config_path
   k0s_version           = var.k0s_version
+  
+  # Load balancer configuration
+  create_loadbalancer      = var.create_loadbalancer
+  controller_instance_keys = var.controller_instance_keys
+  loadbalancer_algorithm   = var.loadbalancer_algorithm
   
   # Application credential
   create_app_credential = var.create_app_credential

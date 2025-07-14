@@ -62,13 +62,13 @@ variable "project_id" {
 variable "flavor_name" {
   description = "Flavor to use for all nodes"
   type        = string
-  default     = "m1.medium"
+  default     = "m1.xlarge"
 }
 
 variable "image_name" {
   description = "Image to use for all nodes"
   type        = string
-  default     = "ubuntu-22.04"
+  default     = "ubuntu-noble-server-amd64"
 }
 
 variable "volume_size" {

@@ -12,6 +12,10 @@ spec:
       metadata:
         name: k0s-k0sctl
       spec:
+%{ if lb_endpoint != null ~}
+        api:
+          externalAddress: ${lb_endpoint}
+%{ endif ~}
         network:
           provider: kuberouter
         storage:

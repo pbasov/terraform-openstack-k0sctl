@@ -93,18 +93,18 @@ variable "instances" {
   }))
   default = {
     controller-1 = {
-      flavor_name = "m1.medium"
-      image_name  = "ubuntu-22.04"
+      flavor_name = "m1.xlarge"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 50
     }
     worker-1 = {
-      flavor_name = "m1.medium"
-      image_name  = "ubuntu-22.04"
+      flavor_name = "m1.xlarge"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 50
     }
     worker-2 = {
-      flavor_name = "m1.medium"
-      image_name  = "ubuntu-22.04"
+      flavor_name = "m1.xlarge"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 50
     }
   }
@@ -128,7 +128,7 @@ variable "ssh_public_key" {
 variable "k0s_version" {
   description = "k0s version to use"
   type        = string
-  default     = "1.28.2+k0s.0"
+  default     = "1.33.2+k0s.0"
 }
 
 variable "generate_k0sctl_config" {
@@ -154,6 +154,25 @@ variable "app_credential_name" {
   description = "Name of the application credential"
   type        = string
   default     = "k0sctl-app-cred"
+}
+
+# Load Balancer Configuration
+variable "create_loadbalancer" {
+  description = "Whether to create a load balancer for controllers"
+  type        = bool
+  default     = false
+}
+
+variable "controller_instance_keys" {
+  description = "List of instance keys that should be controllers (used for load balancer pool members)"
+  type        = list(string)
+  default     = []
+}
+
+variable "loadbalancer_algorithm" {
+  description = "Load balancing algorithm (ROUND_ROBIN, LEAST_CONNECTIONS, SOURCE_IP, SOURCE_IP_PORT)"
+  type        = string
+  default     = "LEAST_CONNECTIONS"
 }
 
 # Tags

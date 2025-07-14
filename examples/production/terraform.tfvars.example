@@ -13,7 +13,7 @@ subnet_cidr = "10.100.0.0/22"
 dns_servers = ["10.0.0.10", "10.0.0.11"]
 
 # Instance Configuration
-os_image               = "ubuntu-22.04-cloud-init"
+os_image               = "ubuntu-noble-server-amd64"
 controller_flavor      = "m1.large"     # 4 vCPU, 8GB RAM
 controller_volume_size = 100
 worker_flavor          = "m1.xlarge"    # 8 vCPU, 16GB RAM
@@ -21,7 +21,7 @@ worker_volume_size     = 500
 volume_type           = "ssd-performance"
 
 # k0s Configuration
-k0s_version = "1.29.1+k0s.0"
+k0s_version = "1.33.2+k0s.0"
 
 # SSH Configuration
 ssh_public_key_file = "~/.ssh/k0sctl-prod.pub"

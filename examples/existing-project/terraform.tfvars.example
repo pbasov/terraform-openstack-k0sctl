@@ -6,8 +6,8 @@ project_id            = "your-existing-project-id"
 # auth_url = "https://openstack.example.com:5000/v3"
 
 # Node configuration
-flavor_name = "m1.medium"
-image_name  = "ubuntu-22.04"
+flavor_name = "m1.xlarge"
+image_name  = "ubuntu-noble-server-amd64"
 volume_size = 50
 
 # SSH public key

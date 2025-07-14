@@ -63,31 +63,31 @@ module "k0sctl" {
   instances = {
     controller-1 = {
       flavor_name = "m1.large"
-      image_name  = "ubuntu-22.04-latest"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 100
       volume_type = "ssd"
     }
     controller-2 = {
       flavor_name = "m1.large"
-      image_name  = "ubuntu-22.04-latest"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 100
       volume_type = "ssd"
     }
     controller-3 = {
       flavor_name = "m1.large"
-      image_name  = "ubuntu-22.04-latest"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 100
       volume_type = "ssd"
     }
     worker-1 = {
       flavor_name = "m1.xlarge"
-      image_name  = "ubuntu-22.04-latest"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 200
       volume_type = "ssd"
     }
     worker-2 = {
       flavor_name = "m1.xlarge"
-      image_name  = "ubuntu-22.04-latest"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 200
       volume_type = "ssd"
     }
@@ -97,7 +97,7 @@ module "k0sctl" {
   ssh_public_key_file = "~/.ssh/k0sctl.pub"
   
   # k0s Configuration
-  k0s_version            = "1.29.1+k0s.0"
+  k0s_version            = "1.33.2+k0s.0"
   generate_k0sctl_config = true
   k0sctl_config_path    = "./configs/k0sctl.yaml"
   

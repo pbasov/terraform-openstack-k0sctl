@@ -1,0 +1,17 @@
+# Example terraform.tfvars file
+# Copy this to terraform.tfvars and update with your values
+
+# OpenStack project ID (required)
+existing_project_id = "your-project-id-here"
+
+# SSH public key file path (optional, defaults to ~/.ssh/id_rsa.pub)
+ssh_public_key_file = "~/.ssh/id_rsa.pub"
+
+# Network configuration (optional, will use defaults if not specified)
+network_name = "k0s-lb-existing-network"
+external_network_name = "public"
+dns_servers = ["8.8.8.8", "8.8.4.4"]
+
+# Node configuration (optional, will use defaults if not specified)
+node_name_prefix = "k0s-node"
+node_count = 3

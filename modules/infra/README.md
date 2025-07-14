@@ -15,13 +15,13 @@ module "infra" {
   # Instance configuration
   instances = {
     controller-1 = {
-      flavor_name = "m1.medium"
-      image_name  = "ubuntu-22.04"
+      flavor_name = "m1.xlarge"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 50
     }
     worker-1 = {
       flavor_name = "m1.large"
-      image_name  = "ubuntu-22.04"
+      image_name  = "ubuntu-noble-server-amd64"
       volume_size = 100
     }
   }
@@ -93,7 +93,7 @@ module "infra" {
 | create_app_credential | Whether to create an application credential | `bool` | `false` | no |
 | generate_k0sctl_config | Whether to generate k0sctl.yaml configuration file | `bool` | `false` | no |
 | k0sctl_config_path | Path where to save the k0sctl.yaml file | `string` | `"./k0sctl.yaml"` | no |
-| k0s_version | k0s version to use | `string` | `"1.28.2+k0s.0"` | no |
+| k0s_version | k0s version to use | `string` | `"1.33.2+k0s.0"` | no |
 
 ## Outputs
 

@@ -59,6 +59,27 @@ output "ssh_keypair_name" {
   value       = module.infra.keypair_name
 }
 
+# Load balancer outputs
+output "loadbalancer_id" {
+  description = "The ID of the load balancer"
+  value       = module.infra.loadbalancer_id
+}
+
+output "loadbalancer_vip" {
+  description = "The VIP address of the load balancer"
+  value       = module.infra.loadbalancer_vip
+}
+
+output "loadbalancer_floating_ip" {
+  description = "The floating IP address of the load balancer"
+  value       = module.infra.loadbalancer_floating_ip
+}
+
+output "k0s_api_endpoint" {
+  description = "k0s API endpoint URL"
+  value       = module.infra.loadbalancer_floating_ip != null ? "https://${module.infra.loadbalancer_floating_ip}:9443" : "Load balancer not created"
+}
+
 # Application credential outputs
 output "app_credential_id" {
   description = "The ID of the application credential"

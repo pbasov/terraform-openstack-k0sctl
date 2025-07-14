@@ -71,3 +71,28 @@ output "instances" {
     }
   }
 }
+
+output "loadbalancer_id" {
+  description = "The ID of the load balancer"
+  value       = var.create_loadbalancer ? openstack_lb_loadbalancer_v2.controllers[0].id : null
+}
+
+output "loadbalancer_vip" {
+  description = "The VIP address of the load balancer"
+  value       = var.create_loadbalancer ? openstack_lb_loadbalancer_v2.controllers[0].vip_address : null
+}
+
+output "loadbalancer_floating_ip" {
+  description = "The floating IP address of the load balancer"
+  value       = var.create_loadbalancer ? openstack_networking_floatingip_v2.lb[0].address : null
+}
+
+output "loadbalancer_pool_id" {
+  description = "The ID of the Kubernetes API load balancer pool"
+  value       = var.create_loadbalancer ? openstack_lb_pool_v2.k8s_api[0].id : null
+}
+
+output "loadbalancer_k0s_pool_id" {
+  description = "The ID of the k0s API load balancer pool"
+  value       = var.create_loadbalancer ? openstack_lb_pool_v2.k0s_api[0].id : null
+}

@@ -49,14 +49,14 @@ variable "create_router" {
 variable "router_name" {
   description = "Name of the router to create"
   type        = string
-  default     = ""
+  default     = "kcm-router"
 }
 
 # Security Group Configuration
 variable "security_group_name" {
   description = "Name of the security group to create"
   type        = string
-  default     = ""
+  default     = "kcm-sg"
 }
 
 variable "security_rules" {
@@ -206,13 +206,62 @@ variable "k0sctl_config_path" {
 variable "k0s_version" {
   description = "k0s version to use"
   type        = string
-  default     = "1.28.2+k0s.0"
+  default     = "1.33.2+k0s.0"
 }
 
 variable "k0s_dynamic_config" {
   description = "Whether to enable k0s dynamic configuration"
   type        = bool
+  default     = true
+}
+
+# Load Balancer Configuration
+variable "create_loadbalancer" {
+  description = "Whether to create a load balancer for controllers"
+  type        = bool
   default     = false
+}
+
+variable "loadbalancer_name" {
+  description = "Name of the load balancer"
+  type        = string
+  default     = ""
+}
+
+variable "loadbalancer_provider" {
+  description = "Provider for the load balancer (e.g., octavia, amphora)"
+  type        = string
+  default     = "octavia"
+}
+
+variable "loadbalancer_algorithm" {
+  description = "Load balancing algorithm (ROUND_ROBIN, LEAST_CONNECTIONS, SOURCE_IP, SOURCE_IP_PORT)"
+  type        = string
+  default     = "LEAST_CONNECTIONS"
+}
+
+variable "loadbalancer_health_monitor_delay" {
+  description = "The time, in seconds, between sending probes to members"
+  type        = number
+  default     = 5
+}
+
+variable "loadbalancer_health_monitor_timeout" {
+  description = "The maximum time, in seconds, that a monitor waits to connect before it times out"
+  type        = number
+  default     = 3
+}
+
+variable "loadbalancer_health_monitor_max_retries" {
+  description = "The number of allowed connection failures before changing the member status to INACTIVE"
+  type        = number
+  default     = 3
+}
+
+variable "controller_instance_keys" {
+  description = "List of instance keys that should be controllers (used for load balancer pool members)"
+  type        = list(string)
+  default     = []
 }
 
 # Tags

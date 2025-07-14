@@ -9,6 +9,7 @@ This is a Terraform module for deploying k0s Kubernetes clusters on OpenStack us
 - Network infrastructure (VPC, subnets, routers)
 - Security groups with Kubernetes-specific rules
 - Compute instances with persistent volumes
+- Load balancer for Kubernetes API high availability
 - Automatic k0sctl configuration generation
 - Application credentials for automation
 
@@ -79,6 +80,7 @@ The module follows a hierarchical structure:
    - Network: Private network, subnet, router, floating IPs
    - Security: Security groups with Kubernetes-specific rules
    - Compute: Instances with boot-from-volume
+   - Load Balancer: Octavia load balancer for Kubernetes API (optional)
    - Configuration: k0sctl YAML for cluster deployment
 
 ## Key Design Patterns
@@ -87,14 +89,14 @@ The module follows a hierarchical structure:
    ```hcl
    instances = {
      "controller-1" = { 
-       flavor_name = "m1.medium"
-       image_name = "ubuntu-22.04"
+       flavor_name = "m1.xlarge"
+       image_name = "ubuntu-noble-server-amd64"
        volume_size = 50
        assign_floating_ip = true 
      }
      "worker-1" = { 
        flavor_name = "m1.large"
-       image_name = "ubuntu-22.04"
+       image_name = "ubuntu-noble-server-amd64"
        volume_size = 100
        assign_floating_ip = false 
      }
@@ -120,6 +122,14 @@ The module follows a hierarchical structure:
    - Calico/VXLAN overlay (4789)
    - Pod-to-pod communication within subnet
 
+5. **Load Balancer Configuration**: Optional Octavia load balancer for high availability:
+   ```hcl
+   # Enable load balancer
+   create_loadbalancer = true
+   controller_instance_keys = ["controller-1", "controller-2", "controller-3"]
+   loadbalancer_algorithm = "LEAST_CONNECTIONS"
+   ```
+
 ## Important Considerations
 
 - All resources are tagged with deployment name for easy identification
@@ -128,6 +138,9 @@ The module follows a hierarchical structure:
 - Password for created users is auto-generated and available in outputs
 - k0sctl.yaml is generated automatically based on infrastructure
 - The module supports both creating new OpenStack projects and using existing ones
+- Load balancer provides high availability for Kubernetes API (port 6443) and k0s API (port 9443)
+- When load balancer is enabled, it automatically configures the external API endpoint
+- Load balancer uses LEAST_CONNECTIONS algorithm for optimal distribution
 
 ## Testing and Validation
 
@@ -145,6 +158,8 @@ Key outputs available after deployment:
 - `controller_ips` - Private IPs of controller nodes
 - `worker_ips` - Private IPs of worker nodes
 - `floating_ips` - Public IPs assigned to instances
+- `loadbalancer_floating_ip` - Load balancer public IP (if enabled)
+- `loadbalancer_vip` - Load balancer private IP (if enabled)
 - `clouds_yaml_path` - Path to generated OpenStack client config
 - `k0sctl_yaml_path` - Path to generated k0s cluster config
 - `project_id` - The ID of the created/used project
@@ -155,18 +170,22 @@ Key outputs available after deployment:
 
 Common issues and solutions:
 
-1. **Quota Errors**: Check OpenStack project quotas for instances, volumes, floating IPs
+1. **Quota Errors**: Check OpenStack project quotas for instances, volumes, floating IPs, load balancers
 2. **Network Conflicts**: Ensure subnet CIDR doesn't overlap with existing networks
 3. **SSH Access**: Verify security group rules and floating IP assignments
 4. **k0sctl Failures**: Check instance connectivity and SSH key permissions
 5. **Volume Boot Issues**: Ensure the image supports boot-from-volume
+6. **Load Balancer Issues**: Verify Octavia service is available and quotas are sufficient
+7. **API Access**: When using load balancer, connect to the load balancer IP, not individual nodes
 
 ## Examples
 
-The repository includes three example configurations:
+The repository includes example configurations:
 
 1. **basic/**: Minimal configuration with defaults
 2. **production/**: Full HA setup with 3 controllers and 3 workers
 3. **existing-project/**: Deploy into an existing OpenStack project
+4. **with-loadbalancer/**: New project with load balancer for HA
+5. **existing-project-with-lb/**: Load balancer in existing project
 
 Each example includes its own README with specific instructions.

@@ -120,7 +120,7 @@ variable "dns_servers" {
 variable "os_image" {
   description = "Operating system image to use"
   type        = string
-  default     = "ubuntu-22.04"
+  default     = "ubuntu-noble-server-amd64"
 }
 
 variable "controller_flavor" {
@@ -156,7 +156,7 @@ variable "volume_type" {
 variable "k0s_version" {
   description = "k0s version to deploy"
   type        = string
-  default     = "1.29.1+k0s.0"
+  default     = "1.33.2+k0s.0"
 }
 
 variable "ssh_public_key_file" {

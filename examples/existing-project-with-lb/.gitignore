@@ -1,0 +1,15 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+
+# Generated files
+k0sctl.yaml
+clouds.yaml
+kubeconfig
+
+# SSH keys
+*.pem
+*.key

@@ -122,6 +122,7 @@ resource "openstack_networking_secgroup_rule_v2" "k0s_api" {
   security_group_id = openstack_networking_secgroup_v2.this.id
 }
 
+
 # Additional security rules
 resource "openstack_networking_secgroup_rule_v2" "additional" {
   for_each = { for idx, rule in var.security_rules : idx => rule }
@@ -235,6 +236,139 @@ resource "openstack_networking_floatingip_associate_v2" "this" {
   ]
 }
 
+# Load Balancer for Controllers
+resource "openstack_lb_loadbalancer_v2" "controllers" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  name            = coalesce(var.loadbalancer_name, "${var.network_name}-k8s-lb")
+  vip_subnet_id   = openstack_networking_subnet_v2.this.id
+  loadbalancer_provider = var.loadbalancer_provider
+  tenant_id       = var.project_id
+  
+  depends_on = [
+    openstack_networking_router_interface_v2.this
+  ]
+}
+
+# Floating IP for Load Balancer
+resource "openstack_networking_floatingip_v2" "lb" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  pool      = data.openstack_networking_network_v2.external.name
+  tenant_id = var.project_id
+}
+
+resource "openstack_networking_floatingip_associate_v2" "lb" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  floating_ip = openstack_networking_floatingip_v2.lb[0].address
+  port_id     = openstack_lb_loadbalancer_v2.controllers[0].vip_port_id
+  
+  depends_on = [
+    openstack_lb_loadbalancer_v2.controllers
+  ]
+}
+
+# Listener for Kubernetes API
+resource "openstack_lb_listener_v2" "k8s_api" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  name            = "${var.network_name}-k8s-api-listener"
+  protocol        = "TCP"
+  protocol_port   = 6443
+  loadbalancer_id = openstack_lb_loadbalancer_v2.controllers[0].id
+}
+
+# Pool for Kubernetes API
+resource "openstack_lb_pool_v2" "k8s_api" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  name        = "${var.network_name}-k8s-api-pool"
+  protocol    = "TCP"
+  lb_method   = var.loadbalancer_algorithm
+  listener_id = openstack_lb_listener_v2.k8s_api[0].id
+}
+
+# Health Monitor for Kubernetes API
+resource "openstack_lb_monitor_v2" "k8s_api" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  name           = "${var.network_name}-k8s-api-monitor"
+  pool_id        = openstack_lb_pool_v2.k8s_api[0].id
+  type           = "TCP"
+  delay          = var.loadbalancer_health_monitor_delay
+  timeout        = var.loadbalancer_health_monitor_timeout
+  max_retries    = var.loadbalancer_health_monitor_max_retries
+}
+
+# Pool Members (Controllers) - Kubernetes API
+resource "openstack_lb_member_v2" "k8s_api" {
+  for_each = var.create_loadbalancer ? { 
+    for k in var.controller_instance_keys : k => k 
+    if contains(keys(var.instances), k)
+  } : {}
+  
+  name          = "${each.key}-k8s-api"
+  pool_id       = openstack_lb_pool_v2.k8s_api[0].id
+  address       = openstack_compute_instance_v2.this[each.key].access_ip_v4
+  protocol_port = 6443
+  subnet_id     = openstack_networking_subnet_v2.this.id
+  
+  depends_on = [
+    openstack_compute_instance_v2.this
+  ]
+}
+
+# Listener for k0s API
+resource "openstack_lb_listener_v2" "k0s_api" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  name            = "${var.network_name}-k0s-api-listener"
+  protocol        = "TCP"
+  protocol_port   = 9443
+  loadbalancer_id = openstack_lb_loadbalancer_v2.controllers[0].id
+}
+
+# Pool for k0s API
+resource "openstack_lb_pool_v2" "k0s_api" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  name        = "${var.network_name}-k0s-api-pool"
+  protocol    = "TCP"
+  lb_method   = var.loadbalancer_algorithm
+  listener_id = openstack_lb_listener_v2.k0s_api[0].id
+}
+
+# Health Monitor for k0s API
+resource "openstack_lb_monitor_v2" "k0s_api" {
+  count = var.create_loadbalancer ? 1 : 0
+  
+  name           = "${var.network_name}-k0s-api-monitor"
+  pool_id        = openstack_lb_pool_v2.k0s_api[0].id
+  type           = "TCP"
+  delay          = var.loadbalancer_health_monitor_delay
+  timeout        = var.loadbalancer_health_monitor_timeout
+  max_retries    = var.loadbalancer_health_monitor_max_retries
+}
+
+# Pool Members (Controllers) - k0s API
+resource "openstack_lb_member_v2" "k0s_api" {
+  for_each = var.create_loadbalancer ? { 
+    for k in var.controller_instance_keys : k => k 
+    if contains(keys(var.instances), k)
+  } : {}
+  
+  name          = "${each.key}-k0s-api"
+  pool_id       = openstack_lb_pool_v2.k0s_api[0].id
+  address       = openstack_compute_instance_v2.this[each.key].access_ip_v4
+  protocol_port = 9443
+  subnet_id     = openstack_networking_subnet_v2.this.id
+  
+  depends_on = [
+    openstack_compute_instance_v2.this
+  ]
+}
+
 # Application Credentials
 resource "openstack_identity_application_credential_v3" "this" {
   count = var.create_app_credential ? 1 : 0
@@ -253,8 +387,11 @@ locals {
       name        = coalesce(v.name, k)
       private_ip  = openstack_compute_instance_v2.this[k].access_ip_v4
       floating_ip = v.assign_floating_ip ? openstack_networking_floatingip_v2.this[k].address : null
+      is_controller = contains(var.controller_instance_keys, k)
     }
   ]
+  
+  lb_endpoint = var.create_loadbalancer ? openstack_networking_floatingip_v2.lb[0].address : null
 }
 
 resource "local_file" "k0sctl_config" {
@@ -264,6 +401,7 @@ resource "local_file" "k0sctl_config" {
     instances      = local.k0sctl_instances
     k0s_version    = var.k0s_version
     dynamic_config = var.k0s_dynamic_config
+    lb_endpoint    = local.lb_endpoint
   })
   
   filename = var.k0sctl_config_path
