@@ -11,7 +11,7 @@ This example demonstrates a production-ready k0sctl cluster deployment with:
 ## Prerequisites
 
 1. OpenStack credentials configured
-2. SSH keypair for production use
+2. SSH keypair
 3. Sufficient quota for 6 instances and associated resources
 
 ## Architecture
@@ -62,24 +62,46 @@ This example demonstrates a production-ready k0sctl cluster deployment with:
    terraform apply prod.tfplan
    ```
 
-4. Deploy k0s cluster:
+4. Create OpenStack cloud config secret (required for CCM/CSI):
+   ```bash
+   # Get application credentials from terraform
+   export APP_CREDENTIAL_ID=$(terraform output -raw app_credential_id)
+   export APP_CREDENTIAL_SECRET=$(terraform output -raw app_credential_secret)
+   
+   # Create the secret
+   kubectl create secret generic openstack-cloud-config \
+     --from-literal=cloud.conf="[Global]
+auth-url=${OS_AUTH_URL}
+application-credential-id=${APP_CREDENTIAL_ID}
+application-credential-secret=${APP_CREDENTIAL_SECRET}
+tls-insecure=true
+region=RegionOne
+
+[BlockStorage]
+ignore-volume-az=true
+
+[LoadBalancer]
+floating-network-id=${FLOATING_NETWORK_ID}
+create-monitor=true
+manage-security-groups=true
+
+[Networking]
+public-network-name=${PUBLIC_NETWORK_NAME}" \
+     -n kube-system
+   ```
+
+5. Deploy k0s cluster:
    ```bash
    k0sctl apply --config ./k0sctl.yaml
    ```
 
-5. Get kubeconfig:
+6. Get kubeconfig:
    ```bash
    k0sctl kubeconfig --config ./k0sctl.yaml > kubeconfig
    export KUBECONFIG=$PWD/kubeconfig
    kubectl get nodes
    ```
 
-## Post-Deployment
-
-1. **Backup Configuration**: Save the generated `clouds.yaml` and `k0sctl.yaml` files
-2. **Monitor Resources**: Check OpenStack dashboard for resource usage
-3. **Configure Monitoring**: Deploy your monitoring stack to the cluster
-4. **Set up Backups**: Configure regular backups of the control plane
 
 ## Customization
 
@@ -100,6 +122,3 @@ worker-4 = {
 
 Additional security rules can be added via the infrastructure module's `security_rules` variable.
 
-## Troubleshooting
-
-See the main module README for common issues and solutions.

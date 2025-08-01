@@ -175,6 +175,12 @@ variable "loadbalancer_algorithm" {
   default     = "LEAST_CONNECTIONS"
 }
 
+variable "loadbalancer_provider" {
+  description = "OpenStack load balancer provider (amphora or ovn)"
+  type        = string
+  default     = "amphorav2"
+}
+
 # Tags
 variable "tags" {
   description = "Tags to apply to resources"

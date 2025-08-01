@@ -175,7 +175,7 @@ variable "app_cred_description" {
 variable "app_cred_roles" {
   description = "List of roles to assign to the application credential"
   type        = list(string)
-  default     = ["member"]
+  default     = ["member", "reader", "load-balancer_member"]
 }
 
 variable "app_cred_expiration" {
@@ -231,7 +231,7 @@ variable "loadbalancer_name" {
 variable "loadbalancer_provider" {
   description = "Provider for the load balancer (e.g., octavia, amphora)"
   type        = string
-  default     = "octavia"
+  default     = "amphorav2"
 }
 
 variable "loadbalancer_algorithm" {

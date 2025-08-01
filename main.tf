@@ -76,6 +76,7 @@ module "infra" {
   create_loadbalancer      = var.create_loadbalancer
   controller_instance_keys = var.controller_instance_keys
   loadbalancer_algorithm   = var.loadbalancer_algorithm
+  loadbalancer_provider    = var.loadbalancer_provider
   
   # Application credential
   create_app_credential = var.create_app_credential

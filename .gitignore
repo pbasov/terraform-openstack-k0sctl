@@ -38,3 +38,10 @@ Thumbs.db
 *.crt
 *.pub
 !examples/**/*.pub
+
+# Claude-related files
+CLAUDE.md
+.claude/
+*.claude
+claude.json
+.claudeignore

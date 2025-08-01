@@ -47,6 +47,7 @@ module "k0s_cluster" {
   create_loadbalancer = true
   controller_instance_keys = [for i in range(var.node_count) : "${var.node_name_prefix}-${i}"]
   loadbalancer_algorithm = "LEAST_CONNECTIONS"
+  loadbalancer_provider = var.loadbalancer_provider
   
   # k0s configuration
   generate_k0sctl_config = true
@@ -107,6 +108,12 @@ variable "node_count" {
   description = "Number of nodes to create"
   type        = number
   default     = 3
+}
+
+variable "loadbalancer_provider" {
+  description = "OpenStack load balancer provider"
+  type        = string
+  default     = "amphorav2"
 }
 
 # Outputs
