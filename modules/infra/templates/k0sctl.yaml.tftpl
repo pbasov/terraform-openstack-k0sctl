@@ -17,7 +17,9 @@ spec:
           externalAddress: ${lb_endpoint}
 %{ endif ~}
         network:
-          provider: kuberouter
+          provider: calico
+          calico:
+            mode: vxlan
         storage:
           type: etcd
         extensions:
